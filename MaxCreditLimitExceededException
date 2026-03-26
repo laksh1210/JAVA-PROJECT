@@ -1,0 +1,10 @@
+package edu.ccrm.exception;
+
+/**
+ * A custom unchecked exception thrown when an enrollment would exceed the maximum allowed credits per semester.
+ */
+public class MaxCreditLimitExceededException extends RuntimeException {
+    public MaxCreditLimitExceededException(String message) {
+        super(message);
+    }
+}

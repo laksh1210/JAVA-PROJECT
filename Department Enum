@@ -1,0 +1,9 @@
+package edu.ccrm.domain;
+
+public enum Department {
+    COMPUTER_SCIENCE,
+    MATHEMATICS,
+    PHYSICS,
+    CHEMISTRY,
+    ENGINEERING
+}

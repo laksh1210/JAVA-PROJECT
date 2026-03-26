@@ -1,0 +1,42 @@
+package edu.ccrm.service;
+
+import edu.ccrm.domain.Enrollment;
+import edu.ccrm.domain.Student;
+import edu.ccrm.exception.StudentNotFoundException;
+
+/**
+ * Service responsible for generating and displaying student transcripts.
+ */
+public class TranscriptService {
+    private final StudentService studentService = new StudentService();
+    private final EnrollmentService enrollmentService = new EnrollmentService();
+
+    public void printTranscript(String regNo) throws StudentNotFoundException {
+        Student student = studentService.findStudentByRegNo(regNo);
+        // Topic: Polymorphism - calling getProfileDetails() on a Person (Student) reference
+        printTranscript(student);
+    }
+
+    private void printTranscript(Student student) {
+        System.out.println("\n================ TRANSCRIPT ================");
+        System.out.println(student.getProfileDetails());
+        System.out.println("------------------------------------------");
+        System.out.printf("%-10s | %-30s | %-8s | %-5s%n", "Code", "Course Title", "Credits", "Grade");
+        System.out.println("------------------------------------------");
+
+        if (student.getEnrollments().isEmpty()) {
+            System.out.println("No enrollments found.");
+        } else {
+            for (Enrollment enrollment : student.getEnrollments()) {
+                System.out.printf("%-10s | %-30s | %-8d | %-5s%n",
+                    enrollment.getCourse().getCourseCode().getCode(),
+                    enrollment.getCourse().getTitle(),
+                    enrollment.getCourse().getCredits(),
+                    enrollment.getGrade());
+            }
+        }
+        System.out.println("------------------------------------------");
+        System.out.printf("Cumulative GPA: %.2f%n", enrollmentService.calculateGPA(student));
+        System.out.println("==========================================");
+    }
+}

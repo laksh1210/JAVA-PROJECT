@@ -1,0 +1,19 @@
+CCRM Usage GuideThis document provides sample commands and data file formats for the Campus Course & Records Manager (CCRM).Main Menu OptionsWhen you run the application, you will be presented with a main menu:=====================================================
+ Campus Course & Records Manager (CCRM)
+=====================================================
+1. Manage Students
+2. Manage Courses
+3. Manage Enrollments & Grades
+4. Data Utilities
+5. Reports
+0. Exit
+=====================================================
+Enter your choice:
+You can navigate through the sub-menus by entering the corresponding number.Sample Data File FormatsThe application can import data from simple comma-separated value (CSV) files. The files should be placed in the data directory at the root of the project.students.csvEach line represents a student with the following format:registrationNumber,fullName,emailExample:S101,Alice Wonderland,alice@example.edu
+S102,Bob Builder,bob@example.edu
+S103,Charlie Chaplin,charlie@example.edu
+courses.csvEach line represents a course with the following format:courseCode,title,credits,department,semesterExample:CS101,Introduction to Programming,3,COMPUTER_SCIENCE,FALL
+MA201,Calculus I,4,MATHEMATICS,FALL
+PHY101,Classical Mechanics,4,PHYSICS,SPRING
+CS305,Data Structures,3,COMPUTER_SCIENCE,SPRING
+Example WorkflowStart the application.Import Data:Navigate to Data Utilities (Option 4).Select Import Students from CSV (Option 1).Select Import Courses from CSV (Option 2).List Students/Courses:Navigate back to the main menu.Go to Manage Students (Option 1) and list all students.Go to Manage Courses (Option 2) and list all courses.Enroll a Student:Navigate to Manage Enrollments (Option 3).Select Enroll Student in Course (Option 1).Enter a student registration number (e.g., S101).Enter a course code (e.g., CS101).Record Grades:In the same menu, select Record Grade for Student (Option 2).Provide the student registration number, course code, and a grade (e.g., A).Generate Transcript:In the same menu, select View Student Transcript (Option 3).Enter the student registration number (S101) to see their full transcript.Backup Data:Navigate to Data Utilities (Option 4).Select Backup Data (Option 4). This will create a timestamped backup folder in the backups directory.

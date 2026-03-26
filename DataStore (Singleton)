@@ -1,0 +1,53 @@
+package edu.ccrm.service;
+
+import edu.ccrm.domain.Course;
+import edu.ccrm.domain.Student;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
+/**
+ * A singleton class that acts as an in-memory database for the application.
+ * It holds collections of all domain objects.
+ */
+public class DataStore {
+
+    private static final DataStore INSTANCE = new DataStore();
+
+    // Using ConcurrentHashMap for thread safety, though not strictly required for this console app.
+    private final Map<String, Student> studentsByRegNo = new ConcurrentHashMap<>();
+    private final Map<String, Course> coursesByCode = new ConcurrentHashMap<>();
+
+    private DataStore() {}
+
+    public static DataStore getInstance() {
+        return INSTANCE;
+    }
+
+    // Student methods
+    public void addStudent(Student student) {
+        studentsByRegNo.put(student.getRegistrationNumber(), student);
+    }
+
+    public Student getStudent(String regNo) {
+        return studentsByRegNo.get(regNo);
+    }
+
+    public Stream<Student> getStudents() {
+        return studentsByRegNo.values().stream();
+    }
+
+    // Course methods
+    public void addCourse(Course course) {
+        coursesByCode.put(course.getCourseCode().getCode(), course);
+    }
+
+    public Course getCourse(String courseCode) {
+        return coursesByCode.get(courseCode);
+    }
+
+    public Stream<Course> getCourses() {
+        return coursesByCode.values().stream();
+    }
+}

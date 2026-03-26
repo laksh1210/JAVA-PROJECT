@@ -1,0 +1,22 @@
+package edu.ccrm.domain;
+
+/**
+ * Enum representing academic semesters.
+ * Demonstrates an enum with a constructor and fields.
+ */
+// Topic: Enums with Constructors & Fields
+public enum Semester {
+    FALL("Fall"),
+    SPRING("Spring"),
+    SUMMER("Summer");
+
+    private final String displayName;
+
+    Semester(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+}

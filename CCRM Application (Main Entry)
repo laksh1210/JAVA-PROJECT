@@ -1,0 +1,14 @@
+package edu.ccrm.cli;
+
+/**
+ * Main entry point for the CCRM application.
+ * This class contains the main method that initializes and runs the CLI manager.
+ */
+public class CccrmApplication {
+
+    public static void main(String[] args) {
+        // Topic: Main Class & Application Entry Point
+        CliManager cliManager = new CliManager();
+        cliManager.run();
+    }
+}

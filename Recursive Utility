@@ -1,0 +1,36 @@
+package edu.ccrm.util;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
+
+/**
+ * A utility class for recursive operations.
+ */
+public class RecursiveUtil {
+
+    /**
+     * Recursively calculates the total size of a directory.
+     * @param path The path to the directory.
+     * @return The total size in bytes.
+     * @throws IOException If an I/O error occurs.
+     */
+    // Topic: Recursion
+    public static long calculateDirectorySize(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            return 0;
+        }
+        if (Files.isRegularFile(path)) {
+            return Files.size(path);
+        }
+
+        long size = 0;
+        try (Stream<Path> stream = Files.list(path)) {
+            for (Path entry : stream.toArray(Path[]::new)) {
+                size += calculateDirectorySize(entry);
+            }
+        }
+        return size;
+    }
+}

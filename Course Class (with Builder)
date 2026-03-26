@@ -1,0 +1,86 @@
+package edu.ccrm.domain;
+
+import java.util.Objects;
+
+/**
+ * Represents a course. This class uses the Builder design pattern for object creation.
+ */
+public class Course {
+
+    private final CourseCode courseCode; // Immutable value object
+    private final String title;
+    private final int credits;
+    private Instructor instructor;
+    private final Semester semester;
+    private final Department department;
+
+    // Private constructor to be used by the Builder
+    private Course(Builder builder) {
+        this.courseCode = builder.courseCode;
+        this.title = builder.title;
+        this.credits = builder.credits;
+        this.instructor = builder.instructor;
+        this.semester = builder.semester;
+        this.department = builder.department;
+    }
+
+    // Getters
+    public CourseCode getCourseCode() {
+        return courseCode;
+    }
+    public String getTitle() { return title; }
+    public int getCredits() { return credits; }
+    public Instructor getInstructor() { return instructor; }
+    public Semester getSemester() { return semester; }
+    public Department getDepartment() { return department; }
+
+    public void setInstructor(Instructor instructor) {
+        this.instructor = instructor;
+    }
+
+    // Topic: Overriding toString()
+    @Override
+    public String toString() {
+        return String.format("Course[Code=%s, Title='%s', Credits=%d, Dept=%s, Semester=%s]",
+            courseCode.getCode(), title, credits, department, semester);
+    }
+
+    // Topic: Nested Classes (static nested class) & Design Pattern (Builder)
+    public static class Builder {
+        private final CourseCode courseCode;
+        private final String title;
+        private int credits;
+        private Instructor instructor;
+        private Semester semester;
+        private Department department;
+
+        public Builder(CourseCode courseCode, String title) {
+            this.courseCode = Objects.requireNonNull(courseCode);
+            this.title = Objects.requireNonNull(title);
+        }
+
+        public Builder credits(int credits) {
+            this.credits = credits;
+            return this;
+        }
+
+        public Builder instructor(Instructor instructor) {
+            this.instructor = instructor;
+            return this;
+        }
+
+        public Builder semester(Semester semester) {
+            this.semester = semester;
+            return this;
+        }
+
+        public Builder department(Department department) {
+            this.department = department;
+            return this;
+        }
+
+        public Course build() {
+            return new Course(this);
+        }
+    }
+}

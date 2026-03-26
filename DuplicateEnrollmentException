@@ -1,0 +1,11 @@
+package edu.ccrm.exception;
+
+/**
+ * A custom unchecked exception thrown when a student tries to enroll in the same course twice.
+ */
+// Topic: Exceptions (Custom Unchecked Exception)
+public class DuplicateEnrollmentException extends RuntimeException {
+    public DuplicateEnrollmentException(String message) {
+        super(message);
+    }
+}

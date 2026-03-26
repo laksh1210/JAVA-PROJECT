@@ -1,0 +1,101 @@
+package edu.ccrm.service;
+
+import edu.ccrm.config.AppConfig;
+import edu.ccrm.domain.*;
+import edu.ccrm.exception.CourseNotFoundException;
+import edu.ccrm.exception.DuplicateEnrollmentException;
+import edu.ccrm.exception.MaxCreditLimitExceededException;
+import edu.ccrm.exception.StudentNotFoundException;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * Manages student enrollments and grading.
+ */
+public class EnrollmentService {
+    private final StudentService studentService = new StudentService();
+    private final CourseService courseService = new CourseService();
+    private final AppConfig config = AppConfig.getInstance();
+    private final DataStore dataStore = DataStore.getInstance();
+
+
+    public void enrollStudent(String regNo, CourseCode courseCode) throws StudentNotFoundException, CourseNotFoundException {
+        Student student = studentService.findStudentByRegNo(regNo);
+        Course course = courseService.findCourseByCode(courseCode);
+
+        // Check for duplicate enrollment
+        boolean alreadyEnrolled = student.getEnrollments().stream()
+            .anyMatch(e -> e.getCourse().getCourseCode().equals(courseCode));
+        if (alreadyEnrolled) {
+            throw new DuplicateEnrollmentException("Student is already enrolled in course " + courseCode);
+        }
+        
+        // Check credit limit
+        int currentCredits = student.getEnrollments().stream()
+            .filter(e -> e.getCourse().getSemester().equals(course.getSemester()))
+            .mapToInt(e -> e.getCourse().getCredits())
+            .sum();
+
+        if (currentCredits + course.getCredits() > config.getMaxCreditsPerSemester()) {
+            throw new MaxCreditLimitExceededException("Enrollment exceeds max credit limit of " + config.getMaxCreditsPerSemester());
+        }
+
+        Enrollment enrollment = new Enrollment(course);
+        student.addEnrollment(enrollment);
+    }
+
+    public void recordMark(String regNo, CourseCode courseCode, Grade grade) throws StudentNotFoundException, CourseNotFoundException {
+        Student student = studentService.findStudentByRegNo(regNo);
+        
+        student.getEnrollments().stream()
+            .filter(e -> e.getCourse().getCourseCode().equals(courseCode))
+            .findFirst()
+            .orElseThrow(() -> new CourseNotFoundException("Student is not enrolled in course " + courseCode))
+            .setGrade(grade);
+        
+        // Topic: Assertions
+        assert grade.getPoints() >= 0.0 : "Grade points must be non-negative";
+    }
+
+    public double calculateGPA(Student student) {
+        // Topic: Primitive Types & Operators
+        List<Enrollment> gradedEnrollments = student.getEnrollments().stream()
+            .filter(e -> e.getGrade().getPoints() >= 0)
+            .collect(Collectors.toList());
+
+        if (gradedEnrollments.isEmpty()) {
+            return 0.0;
+        }
+
+        double totalPoints = gradedEnrollments.stream()
+            .mapToDouble(e -> e.getGrade().getPoints() * e.getCourse().getCredits())
+            .sum();
+
+        int totalCredits = gradedEnrollments.stream()
+            .mapToInt(e -> e.getCourse().getCredits())
+            .sum();
+
+        return totalPoints / totalCredits;
+    }
+
+    public void printGpaDistribution() {
+        System.out.println("\n--- GPA Distribution Report ---");
+        // Topic: Streams API (Data Processing)
+        Map<String, Long> gpaRanges = dataStore.getStudents()
+                .map(this::calculateGPA)
+                .collect(Collectors.groupingBy(
+                        gpa -> {
+                            if (gpa >= 9.0) return "9.0 - 10.0 (Excellent)";
+                            if (gpa >= 8.0) return "8.0 - 8.9 (Very Good)";
+                            if (gpa >= 7.0) return "7.0 - 7.9 (Good)";
+                            if (gpa >= 6.0) return "6.0 - 6.9 (Average)";
+                            else return "Below 6.0 (Needs Improvement)";
+                        },
+                        Collectors.counting()
+                ));
+        
+        gpaRanges.forEach((range, count) -> System.out.printf("%-30s: %d student(s)%n", range, count));
+    }
+}

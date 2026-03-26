@@ -1,0 +1,70 @@
+package edu.ccrm.domain;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Represents a student, inheriting from the Person class.
+ * Demonstrates inheritance and encapsulation.
+ */
+// Topic: OOP (Inheritance)
+public class Student extends Person {
+
+    // Topic: OOP (Encapsulation) - private fields
+    private final String registrationNumber;
+    private StudentStatus status;
+    private List<Enrollment> enrollments;
+
+    public Student(String registrationNumber, String fullName, String email) {
+        // Topic: `super` keyword
+        super(fullName, email);
+        if (registrationNumber == null || registrationNumber.isBlank()) {
+            throw new IllegalArgumentException("Registration number cannot be null or blank.");
+        }
+        this.registrationNumber = registrationNumber;
+        this.status = StudentStatus.ACTIVE;
+        this.enrollments = new ArrayList<>();
+    }
+
+    // Getters
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public StudentStatus getStatus() {
+        return status;
+    }
+
+    public List<Enrollment> getEnrollments() {
+        // Defensive copying could be used here for better encapsulation
+        return enrollments;
+    }
+
+    // Business Logic Methods
+    public void addEnrollment(Enrollment enrollment) {
+        if (enrollment != null) {
+            this.enrollments.add(enrollment);
+        }
+    }
+
+    // Topic: Overriding
+    @Override
+    public String getProfileDetails() {
+        String courses = enrollments.stream()
+            .map(e -> e.getCourse().getCourseCode().getCode())
+            .collect(Collectors.joining(", "));
+        return String.format("Student [RegNo: %s, Name: %s, Email: %s, Status: %s, Enrolled Courses: %s]",
+            registrationNumber, fullName, email, status, courses.isEmpty() ? "None" : courses);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Student[RegNo=%s, Name=%s, Email=%s, Status=%s]",
+            registrationNumber, fullName, email, status);
+    }
+}
+
+enum StudentStatus {
+    ACTIVE, INACTIVE, GRADUATED
+}

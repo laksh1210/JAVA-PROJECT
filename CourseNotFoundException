@@ -1,0 +1,11 @@
+package edu.ccrm.exception;
+
+/**
+ * A custom checked exception thrown when a course cannot be found.
+ */
+// Topic: Exceptions (Custom Checked Exception)
+public class CourseNotFoundException extends Exception {
+    public CourseNotFoundException(String message) {
+        super(message);
+    }
+}

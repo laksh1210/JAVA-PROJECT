@@ -1,0 +1,14 @@
+package edu.ccrm.service;
+
+import java.util.List;
+import java.util.function.Predicate;
+
+/**
+ * A functional interface to demonstrate its use in search operations.
+ * @param <T> The type of object to search for.
+ */
+// Topic: Interfaces (Functional Interface)
+@FunctionalInterface
+public interface Searchable<T> {
+    List<T> search(Predicate<T> filter);
+}

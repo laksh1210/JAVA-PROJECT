@@ -1,0 +1,53 @@
+package edu.ccrm.io;
+
+import edu.ccrm.config.AppConfig;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+/**
+ * Handles the creation of timestamped data backups.
+ */
+public class BackupService {
+
+    private final AppConfig config = AppConfig.getInstance();
+
+    /**
+     * Creates a backup of the data directory.
+     * @return The path to the created backup directory.
+     * @throws IOException if an I/O error occurs.
+     */
+    public Path performBackup() throws IOException {
+        // Topic: Date/Time API
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
+        Path sourceDir = Paths.get(config.getDataDirectory());
+        Path backupDir = Paths.get(config.getBackupDirectory(), "backup_" + timestamp);
+
+        // Topic: NIO.2 (Files, Path)
+        if (!Files.exists(sourceDir)) {
+            throw new IOException("Data source directory does not exist: " + sourceDir);
+        }
+        Files.createDirectories(backupDir);
+
+        // Using a stream to walk the file tree and copy files
+        // Topic: Streams API (I/O)
+        try (var paths = Files.walk(sourceDir)) {
+            paths.filter(Files::isRegularFile)
+                .forEach(sourcePath -> {
+                    try {
+                        Path destinationPath = backupDir.resolve(sourceDir.relativize(sourcePath));
+                        Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        // In a real app, this should be handled more gracefully
+                        e.printStackTrace();
+                    }
+                });
+        }
+        return backupDir;
+    }
+}

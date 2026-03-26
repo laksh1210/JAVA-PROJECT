@@ -1,0 +1,43 @@
+package edu.ccrm.service;
+
+import edu.ccrm.domain.Course;
+import edu.ccrm.domain.CourseCode;
+import edu.ccrm.exception.CourseNotFoundException;
+
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+/**
+ * Provides business logic for course management.
+ */
+public class CourseService {
+
+    private final DataStore dataStore = DataStore.getInstance();
+
+    public void addCourse(Course course) {
+        dataStore.addCourse(course);
+    }
+
+    public List<Course> getAllCourses() {
+        return dataStore.getCourses().collect(Collectors.toList());
+    }
+
+    public Course findCourseByCode(CourseCode courseCode) throws CourseNotFoundException {
+        Course course = dataStore.getCourse(courseCode.getCode());
+        if (course == null) {
+            throw new CourseNotFoundException("Course with code '" + courseCode.getCode() + "' not found.");
+        }
+        return course;
+    }
+
+    /**
+     * Searches courses using a given predicate.
+     * Demonstrates use of a functional interface.
+     * @param predicate The search condition.
+     * @return A list of matching courses.
+     */
+    public List<Course> searchCourses(Predicate<Course> predicate) {
+        return dataStore.getCourses().filter(predicate).collect(Collectors.toList());
+    }
+}

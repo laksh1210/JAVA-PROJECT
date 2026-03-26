@@ -1,0 +1,22 @@
+package edu.ccrm.domain;
+
+/**
+ * Represents an instructor, inheriting from the Person class.
+ */
+public class Instructor extends Person {
+
+    private String department;
+    private String title;
+
+    public Instructor(String fullName, String email, String department, String title) {
+        super(fullName, email);
+        this.department = department;
+        this.title = title;
+    }
+
+    @Override
+    public String getProfileDetails() {
+        return String.format("Instructor [Name: %s, Email: %s, Title: %s, Department: %s]",
+            fullName, email, title, department);
+    }
+}
